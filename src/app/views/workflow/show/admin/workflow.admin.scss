@@ -1,0 +1,26 @@
+#WorkflowAdmin {
+    textarea {
+        height: 8em;
+    }
+
+    .app-icon {
+        height: 5em;
+        width: 5em;
+    }
+
+    .submitbutton {
+        height: 2em;
+    }
+
+    .ui.horizontal.list > .item {
+        margin-right: 0.5em;
+    }
+
+  .field {
+    margin-top: 10px;
+  }
+}
+
+.dryrun {
+  min-height: 460px;
+}

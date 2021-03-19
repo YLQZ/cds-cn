@@ -1,0 +1,17 @@
+<div class="status-icon" [ngSwitch]="status">
+    <div class="wrapper">
+        <ng-container *ngSwitchCase="pipelineStatusEnum.BUILDING">
+            <img id="gifloader" height="24" width="24" src="./assets/images/loader.gif">
+        </ng-container>
+        <i class="check green icon" *ngSwitchCase="pipelineStatusEnum.SUCCESS"></i>
+        <ng-container *ngSwitchCase="pipelineStatusEnum.FAIL">
+            <i class="remove red icon" *ngIf="!optional"></i>
+            <i class="warning sign icon orange" *ngIf="optional"></i>
+        </ng-container>
+        <i class="remove red icon" *ngSwitchCase="pipelineStatusEnum.STOPPED"></i>
+        <i class="ban grey icon" *ngSwitchCase="pipelineStatusEnum.DISABLED"></i>
+        <i class="ban grey icon" *ngSwitchCase="pipelineStatusEnum.SKIPPED"></i>
+        <i class="wait blue icon" *ngSwitchCase="pipelineStatusEnum.WAITING"></i>
+        <i class="stop grey icon" *ngSwitchDefault></i>
+    </div>
+</div>

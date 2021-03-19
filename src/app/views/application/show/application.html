@@ -1,0 +1,129 @@
+<div *ngIf="application;then showApp;else loadApp"></div>
+<ng-template #showApp>
+    <div id="ApplicationShow">
+        <app-project-breadcrumb [project]="project" [application]="readOnlyApplication" [workflow]="workflowName"
+            [workflowRun]="workflowNum" [workflowRunNode]="workflowNodeRun" [wPipeline]="workflowPipeline">
+            <div class="right floated labelFeature" [title]="'workflow_from_repository_btn' | translate">
+                <a class="ui label small basic" [class.green]="application && application.from_repository" suiPopup
+                    [popupTemplate]="popupFromRepository" popupPlacement="bottom right" popupTrigger="outsideClick"
+                    #popup="suiPopup">
+                    <i class="code icon"></i>as code
+                </a>
+                <ng-template let-popup #popupFromRepository>
+                    <div class="content infoPopup">
+                        <ng-container *ngIf="application && application.from_repository">
+                            <p>
+                                {{ 'application_from_repository' | translate: {repo: application.from_repository} }}
+                            </p>
+                        </ng-container>
+                        <ng-container *ngIf="application && !application.from_repository">
+                            <p>{{'application_repository_help_line_1' | translate}}</p>
+                            <p>{{'workflow_repository_help_line_2' | translate}}</p>
+                            <div class="footer">
+                                <div>
+                                    <div class="ui list">
+                                        <a class="item" target="_blank" rel="noopener noreferrer"
+                                            href="#" [routerLink]="['/docs', 'tutorials', 'init_workflow_with_cdsctl']">
+                                            {{'common_read_more'| translate}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-template>
+            </div>
+        </app-project-breadcrumb>
+
+        <div class="CDSmenu" *ngIf="application">
+            <sm-menu title="" class="pointing secondary">
+                <a sm-item [class.active]="selectedTab === 'home'" (click)="showTab('home')">
+                    <i class=""></i>{{ 'common_home' | translate }}
+                </a>
+                <a sm-item [class.active]="selectedTab === 'variables'" (click)="showTab('variables')">
+                    <i class="font icon"></i>{{ 'common_variables' | translate }}
+                </a>
+                <a sm-item [class.active]="selectedTab === 'vuln'" (click)="showTab('vuln')">
+                    {{ 'common_vulnerabilities' | translate}}
+                </a>
+                <a sm-item [class.active]="selectedTab === 'usage'" (click)="showTab('usage')">
+                    <i class="map signs icon"></i>{{ 'common_usage' | translate }}{{ ' (' + usageCount + ')' }}
+                </a>
+                <a sm-item [class.active]="selectedTab === 'keys'" id="ApplicationKeysTab" (click)="showTab('keys')"><i
+                        class="privacy icon"></i>
+                    {{ 'common_keys' | translate }}
+                </a>
+                <a sm-item [class.active]="selectedTab === 'advanced'" (click)="showTab('advanced')">
+                    <i class="graduation icon"></i>{{ 'common_advanced' | translate }}
+                </a>
+                <div class="ui small buttons" *ngIf="editMode && !readOnly">
+                    <ng-container *ngIf="application.editModeChanged">
+                        <button class="ui button" (click)="cancelApplication()">{{'common_cancel' | translate }}</button>
+                        <div class="or"></div>
+                    </ng-container>
+                    <button class="ui green button" [disabled]="!application.editModeChanged"
+                            (click)="saveEditMode()">{{'btn_save_application' | translate }}</button>
+                </div>
+            </sm-menu>
+        </div>
+
+        <div class="scrollingContent">
+            <div class="paddingContent">
+                <div class="viewContent">
+                    <div [ngSwitch]="selectedTab">
+                        <div *ngSwitchCase="'home'">
+                            <app-home [project]="project" [application]="application"></app-home>
+                        </div>
+                        <div *ngSwitchCase="'variables'">
+                            <ng-container
+                                *ngIf="!readOnly">
+                                <h3>{{ 'application_variable_form_title' | translate}}</h3>
+                                <app-variable-form [loading]="varFormLoading"
+                                    (createVariableEvent)="variableEvent($event)"></app-variable-form>
+                            </ng-container>
+                            <h3>{{ 'application_variable_list_title' | translate}}</h3>
+                            <app-variable [variables]="application.variables"
+                                [mode]="readOnly?'ro':'edit'"
+                                (event)="variableEvent($event)" auditContext="application" [project]="project"
+                                [applicationName]="readOnlyApplication.name"></app-variable>
+                            <app-warning-modal [title]="_translate.instant('warning_modal_title')"
+                                [msg]="_translate.instant('warning_modal_body')" (event)="variableEvent($event, true)"
+                                #varWarning></app-warning-modal>
+                        </div>
+                        <div *ngSwitchCase="'vuln'">
+                            <app-vulnerabilities [edit]="project.permissions.writable"></app-vulnerabilities>
+                        </div>
+
+                        <div *ngSwitchCase="'usage'">
+                            <ng-container *ngIf="usageCount > 0">
+                                <app-usage [project]="project" [workflows]="workflows" [pipelines]="pipelines"
+                                    [environments]="environments"></app-usage>
+                            </ng-container>
+                            <ng-container *ngIf="usageCount === 0">
+                                <div class="ui info message">
+                                    {{ 'application_no_usage' | translate }}
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div *ngSwitchCase="'keys'">
+                            <app-application-keys [project]="project" [application]="application" [editMode]="editMode" [readOnly]="readOnly">
+                            </app-application-keys>
+                        </div>
+                        <div *ngSwitchCase="'advanced'">
+                            <app-application-admin [application]="application" [project]="project" [editMode]="editMode">
+                            </app-application-admin>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #loadApp>
+    <div class="ui text active loader">Loading application...</div>
+</ng-template>
+<ng-container *ngIf="application?.workflow_ascode_holder">
+    <app-ascode-save-modal [project]="project" [workflow]="application.workflow_ascode_holder" [name]="readOnlyApplication.name"
+                           #updateEditMode>
+    </app-ascode-save-modal>
+</ng-container>

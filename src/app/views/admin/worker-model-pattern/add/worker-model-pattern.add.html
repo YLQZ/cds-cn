@@ -1,0 +1,7 @@
+<div class="wrapper">
+    <app-breadcrumb [path]="path"></app-breadcrumb>
+    <app-scrollview class="scrollview">
+        <app-worker-model-pattern-form [pattern]="pattern" [loading]="loading" (save)="onSave($event)">
+        </app-worker-model-pattern-form>
+    </app-scrollview>
+</div>

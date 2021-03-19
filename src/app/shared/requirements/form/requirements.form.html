@@ -1,0 +1,126 @@
+<form class="ui form requirementForm" #formAddRequirement="ngForm">
+    <div class="fields">
+        <div class="three wide field">
+            <div class="field">
+                <sm-select class="search" *ngIf="availableRequirements.length > 0" (onChange)="selectType()" [(model)]="newRequirement.type" [options]="{'fullTextSearch': true}" placeholder="{{ 'requirement_type' | translate }}">
+                    <option *ngFor="let r of availableRequirements" value="{{r}}">{{r}}</option>
+                </sm-select>
+            </div>
+        </div>
+        <div class="ten wide field">
+            <div class="field" *ngIf="newRequirement.type === 'service'">
+                <label for="requirementname">
+                        {{ 'requirement_hostname_service' | translate }}
+                    </label>
+                <input name="requirementname" id="requirementname" [disabled]="newRequirement.type !== 'service'" auto-complete autocomplete="off" type="text" required pattern="[a-zA-Z0-9\-\._]*" placeholder="{{placeholderTypeName[newRequirement.type]}}" [source]="suggest"
+                    [min-chars]="3" [(ngModel)]="newRequirement.name" [no-match-found-text]="false">
+                <div *ngIf="formAddRequirement.invalid && !formAddRequirement.pristine" class="ui error message">
+                    <p>{{'requirement_hostname_error' | translate}}</p>
+                </div>
+            </div>
+            <div class="field" *ngIf="newRequirement.type === 'os-architecture'">
+                <input name="name" [disabled]="newRequirement.type !== 'os-architecture'" auto-complete autocomplete="off" type="text" required placeholder="{{'requirement_placeholder_name_' + newRequirement.type | translate}}" [source]="suggestWithOsArch" [min-chars]="0"
+                    [(ngModel)]="newRequirement.value" (keyup)="setName(formAddRequirement)" (blur)="setName(formAddRequirement)">
+                <div *ngIf="formAddRequirement.invalid && !formAddRequirement.pristine" class="ui error message">
+                    <p>{{'requirement_os-architecture_error' | translate}}</p>
+                </div>
+            </div>
+            <div *ngIf="newRequirement.type !== 'model' && newRequirement.type !== 'os-architecture'">
+                <label for="value" *ngIf="newRequirement.type === 'service'">
+                        {{ 'requirement_value_service' | translate }}
+                    </label>
+                <div class="field">
+                    <input name="value" id="value" auto-complete autocomplete="off" type="text" [source]="suggest" [min-chars]="3" [(ngModel)]="newRequirement.value" (keyup)="setName(formAddRequirement)" placeholder="{{placeholderTypeValue[newRequirement.type]}}"
+                        [no-match-found-text]="false">
+                </div>
+            </div>
+
+            <div *ngIf="newRequirement.type === 'model' && workerModels != null">
+                <input name="value-workermodel" auto-complete autocomplete="off" type="text" [source]="suggestWithWorkerModel" [min-chars]="0" [(ngModel)]="newRequirement.value" (keyup)="setName(formAddRequirement)" (blur)="setName(formAddRequirement)" placeholder="{{'requirement_placeholder_value_model' | translate}}"
+                    [no-match-found-text]="false">
+                <p *ngIf="workerModelLinked != null">
+                    <a class="ui" [routerLink]="['/settings', 'worker-model', newRequirement.value]" target="_blank" (click)="closeModal()">
+                            {{ 'requirement_settings_worker_model' | translate }} {{ newRequirement.value }}
+                        </a>
+                </p>
+                <label for="opts">
+                        {{ 'requirement_options' | translate }}
+                    </label>
+                <textarea name="opts" id="opts" [(ngModel)]="newRequirement.opts" rows="3" placeholder="{{'requirement_placeholder_opts_model' | translate}}"></textarea>
+            </div>
+            <div *ngIf="newRequirement.type === 'service'">
+                <label for="servopts">
+                        {{ 'requirement_options' | translate }}
+                    </label>
+                <textarea name="servopts" id="servopts" [(ngModel)]="newRequirement.opts" rows="3" placeholder="{{'requirement_placeholder_opts_service' | translate}}"></textarea>
+            </div>
+        </div>
+        <div class="one wide center mtop8" *ngIf="newRequirement.type === 'model' && workerModelLinked != null">
+            <span *ngIf="workerModelLinked.is_official" [smDirTooltip]="'worker_model_official_tooltip' | translate" smDirPosition="top center"><i class="check circle outline icon large green"></i></span>
+            <span *ngIf="!workerModelLinked.is_official" [smDirTooltip]="'worker_model_unofficial' | translate" smDirPosition="top center"><i class="remove circle outline icon large red"></i></span>
+            <span *ngIf="workerModelLinked.is_deprecated" [smDirTooltip]="'worker_model_deprecated_tooltip' | translate" smDirPosition="top center"><i class="exclamation circle icon large orange"></i></span>
+        </div>
+        <div class="two wide center field">
+            <div suiPopup
+            [popupText]="popupText"
+            popupPlacement="top"
+            *ngIf="(newRequirement.type === 'model' && config.disableModel) || (newRequirement.type === 'hostname' && config.disableHostname) || (newRequirement.type === 'region' && config.disableRegion)">
+                <button class="ui blue icon button"
+                    [disabled]="!isFormValid"
+                    (click)="onSubmitAddRequirement(formAddRequirement)">
+                    <i class="plus icon"></i>
+                </button>
+            </div>
+            <div *ngIf="(newRequirement.type !== 'model' || !config.disableModel) && (newRequirement.type !== 'hostname' || !config.disableHostname) && (newRequirement.type !== 'region' || !config.disableRegion)">
+                <button class="ui blue icon button"
+                    [disabled]="!isFormValid"
+                    (click)="onSubmitAddRequirement(formAddRequirement)">
+                    <i class="plus icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <p>
+        <i class="fa fa-book"></i>
+        <a href="#" [routerLink]="['/docs', 'docs', 'concepts', 'requirement']" target="_blank" rel="noopener noreferrer">
+        {{ 'requirement_documentation' | translate }} </a>
+    </p>
+
+    <div [ngSwitch]="newRequirement.type">
+        <div *ngSwitchCase="'binary'">
+            {{ 'requirement_help_binary_0' | translate }}
+        </div>
+        <div *ngSwitchCase="'hostname'">
+            {{ 'requirement_help_hostname_0' | translate }}
+        </div>
+        <div *ngSwitchCase="'os-architecture'">
+            {{ 'requirement_help_os-architecture_0' | translate }}
+        </div>
+        <div *ngSwitchCase="'model'">
+            {{ 'requirement_help_model_0' | translate }}
+            <ul>
+                <li>{{ 'requirement_help_model_1' | translate }}</li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'tutorials', 'worker_model-docker']">{{ 'requirement_help_model_2' | translate }}</a></li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'tutorials', 'worker_model-docker', 'docker-customized']">{{ 'requirement_help_model_3' | translate }}</a></li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'tutorials', 'worker_model-openstack']">{{ 'requirement_help_model_4' | translate }}</a></li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'concepts', 'worker-model']">{{ 'requirement_help_model_5' | translate }}</a></li>
+            </ul>        
+        </div>
+        <div *ngSwitchCase="'memory'">
+            {{ 'requirement_help_memory_0' | translate }}
+            <ul>
+                <li>{{ 'requirement_help_memory_1' | translate }}</li>
+                <li>{{ 'requirement_help_memory_2' | translate }}<a href="#" [routerLink]="['/docs', 'docs', 'concepts', 'worker-model']">Worker Model</a> type Docker</li>
+            </ul>
+        </div>
+        <div *ngSwitchCase="'service'">
+            {{ 'requirement_help_service_0' | translate }}
+            <ul>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'concepts', 'requirement']">{{ 'requirement_help_service_1' | translate }}</a></li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'tutorials', 'service-requirement-nginx']">{{ 'requirement_help_service_2' | translate }}</a></li>
+                <li><a target="_blank" href="#" [routerLink]="['/docs', 'docs', 'tutorials', 'service-requirement-pg']">{{ 'requirement_help_service_3' | translate }}</a></li>
+                <li>{{ 'requirement_help_service_4' | translate }}</li>
+            </ul>
+        </div>
+    </div>
+</form>

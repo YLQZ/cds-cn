@@ -1,0 +1,5 @@
+<div class="history">
+    <app-data-table [withPagination]="25" [columns]="columns" [data]="history" [loading]="loading"
+        [activeLine]="currentSelect()" [withLineClick]="true" (clickLine)="goToSubNumber($event)">
+    </app-data-table>
+</div>

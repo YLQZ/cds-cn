@@ -1,0 +1,203 @@
+<div class="wrapper">
+    <app-breadcrumb [path]="path"></app-breadcrumb>
+    <div class="page-content">
+        <app-menu class="menu" [withRouting]="true" [orientation]="'VERTICAL'" [items]="menuItems"
+            (onSelect)="selectMenuItem($event)">
+        </app-menu>
+        <app-scrollview class="scrollview" *ngIf="selectedItem" [ngSwitch]="selectedItem.key">
+            <ng-container *ngSwitchCase="'profile'" class="ui grid">
+                <div *ngIf="user;then showUser;else loadUser"></div>
+                <ng-template #showUser>
+                    <form class="ui form">
+                        <div class="ui grid">
+                            <div class="ui row">
+                                <div class="wide column">
+                                    <div class="field">
+                                        <label>{{'user_label_username' | translate}}</label>
+                                        <input class="ui input" type="text" name="username" [(ngModel)]="user.username"
+                                            [disabled]="loading" [readonly]="!editable">
+                                    </div>
+                                    <div class="field">
+                                        <label>{{'user_label_fullname' | translate}}</label>
+                                        <input class="ui input" type="text" name="fullname" [(ngModel)]="user.fullname"
+                                            [disabled]="loading" [readonly]="!editable">
+                                    </div>
+                                    <div class="field">
+                                        <label for="admin">{{'user_label_ring' | translate}}</label>
+                                        <sm-select *ngIf="currentAuthSummary.isAdmin()" class="fluid search" name="admin"
+                                            [disabled]="loading" [(model)]="user.ring">
+                                            <option [value]="'USER'">USER</option>
+                                            <option [value]="'MAINTAINER'">MAINTAINER</option>
+                                            <option [value]="'ADMIN'">ADMIN</option>
+                                        </sm-select>
+                                        <input *ngIf="!currentAuthSummary.isAdmin()" class="ui input" type="text" name="admin"
+                                            [ngModel]="user.ring" [readonly]="true">
+                                    </div>
+                                    <div class="field inline" *ngIf="editable">
+                                        <app-delete-button class="left floated" (event)="clickDelete()"
+                                            [loading]="deleteLoading">
+                                        </app-delete-button>
+                                        <button class="ui green right floated button" [class.loading]="loading"
+                                            (click)="clickSave()">
+                                            <i class="save icon"></i>{{ 'btn_save' | translate }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </ng-template>
+                <ng-template #loadUser>
+                    <div class="ui text active loader">{{ 'user_load_user' | translate }}</div>
+                </ng-template>
+            </ng-container>
+            <div *ngSwitchCase="'groups'" class="ui grid">
+                <div class="wide column">
+                    <app-data-table [withPagination]="10" [columns]="columnsGroups" [data]="groups"
+                        [loading]="loadingGroups"></app-data-table>
+                </div>
+            </div>
+            <div *ngSwitchCase="'contacts'" class="ui grid">
+                <div class="wide column">
+                    <app-data-table [withPagination]="10" [columns]="columnsContacts" [data]="contacts"
+                        [loading]="loadingContacts"></app-data-table>
+                </div>
+            </div>
+            <div *ngSwitchCase="'authentication'" class="ui grid">
+                <div class="sixteen wide column">
+                    <h2 class="ui header">
+                        <i class="id card icon small"></i>
+                        <div class="content">
+                            {{ 'user_auth_consumers' | translate }}
+                        </div>
+                    </h2>
+                    <div class="ui four stackable centered cards">
+                        <ng-container *ngFor="let d of drivers">
+                            <div class="ui card" *ngIf="mConsumers[d.type] || user.id === currentAuthSummary.user.id">
+                                <div class="content" [ngSwitch]="d.type">
+                                    <ng-container *ngSwitchCase="'local'">
+                                        <div class="center aligned header">
+                                            <i class="ui lock icon huge"></i>
+                                        </div>
+                                        <div class="center aligned description">
+                                            Local
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'ldap'">
+                                        <div [suiTransition]="transitionController">
+                                            <ng-container *ngIf="!showLDAPSigninForm">
+                                                <div class="center aligned header">
+                                                    <i class="ui address book icon huge"></i>
+                                                </div>
+                                                <div class="center aligned description">
+                                                    LDAP
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf="showLDAPSigninForm">
+                                                <form class="ui form" #ldapSigninForm="ngForm">
+                                                    <div class="field">
+                                                        <label>LDAP Bind*</label>
+                                                        <input type="text" name="bind" ngModel required>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>{{ 'user_label_password' | translate }}*</label>
+                                                        <input type="password" name="password" ngModel required>
+                                                    </div>
+                                                </form>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'corporate-sso'">
+                                        <div class="center aligned header">
+                                            <i class="ui shield alternate icon huge"></i>
+                                        </div>
+                                        <div class="center aligned description">
+                                            Corporate SSO
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'openid-connect'">
+                                        <div class="center aligned header">
+                                            <i class="ui openid icon huge"></i>
+                                        </div>
+                                        <div class="center aligned description">
+                                            OpenID Connect
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchDefault>
+                                        <div class="center aligned header">
+                                            <i class="ui {{d.type}} icon huge"></i>
+                                        </div>
+                                        <div class="center aligned description">
+                                            {{d.type | titlecase}}
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="extra content center aligned">
+                                    <ng-container *ngIf="mConsumers[d.type]" [ngSwitch]="d.type">
+                                        <ng-container *ngSwitchCase="'local'">
+                                            <button class="ui primary button small"
+                                                (click)="clickConsumerDetails(mConsumers[d.type])">{{'common_details' | translate}}</button>
+                                            <button *ngIf="user.id === currentAuthSummary.user.id" class="ui green button small"
+                                                (click)="clickConsumerLocalReset()">{{'account_password_btn_reset' | translate}}</button>
+                                        </ng-container>
+                                        <ng-container *ngSwitchDefault>
+                                            <button class="ui primary button small"
+                                                (click)="clickConsumerDetails(mConsumers[d.type])">{{'common_details' | translate}}</button>
+                                            <app-confirm-button *ngIf="user.id === currentAuthSummary.user.id" [class]="'small'"
+                                                [color]="'red'" (event)="clickConsumerDetach(mConsumers[d.type])"
+                                                [title]="'user_auth_consumer_detach_btn'">
+                                            </app-confirm-button>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="!mConsumers[d.type]" [ngSwitch]="d.type">
+                                        <ng-container *ngSwitchCase="'local'">
+                                            <button class="ui green button small" [class.loading]="loadingLocalReset"
+                                                (click)="clickConsumerLocalReset()">{{'account_password_btn_reset' | translate}}</button>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="'ldap'">
+                                            <button class="ui green button small"
+                                                (click)="clickConsumerLDAPSignin()">{{(showLDAPSigninForm ? 'account_btn_submit' : 'account_btn_signin') | translate}}</button>
+                                        </ng-container>
+                                        <ng-container *ngSwitchDefault>
+                                            <a class="ui green button small" [routerLink]="'/auth/ask-signin/'+d.type"
+                                                [queryParams]="{redirect_uri: '/settings/user/'+user.username+'?item=authentication', require_mfa: false}">
+                                                {{'account_btn_signin' | translate}}
+                                            </a>
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="sixteen wide column">
+                    <h3 class="ui header">
+                        <div class="content">
+                            {{ 'user_auth_my_consumers' | translate }}
+                            <i *ngIf="user.id === currentAuthSummary.user.id" class="add circle link icon green"
+                                (click)="clickConsumerCreate()"></i>
+                        </div>
+                    </h3>
+                    <app-data-table [withFilter]="filterConsumers" [withPagination]="10" [columns]="columnsConsumers"
+                        [data]="myConsumers" [loading]="loadingAuthData">
+                    </app-data-table>
+                </div>
+                <div class="sixteen wide column">
+                    <h2 class="ui header">
+                        <i class="alternate ticket icon small"></i>
+                        <div class="content">
+                            {{ 'user_auth_sessions' | translate }}
+                        </div>
+                    </h2>
+                    <app-data-table [withFilter]="filterSessions" [withPagination]="10" [columns]="columnsSessions"
+                        [data]="sessions" [loading]="loadingAuthData"></app-data-table>
+                </div>
+            </div>
+        </app-scrollview>
+    </div>
+</div>
+<app-consumer-create-modal #consumerCreateModal [user]="user" (close)="modalCreateClose($event)">
+</app-consumer-create-modal>
+<app-consumer-details-modal #consumerDetailsModal [user]="user" [consumer]="selectedConsumer"
+    (close)="modalDetailsClose($event)">
+</app-consumer-details-modal>

@@ -1,0 +1,50 @@
+@import '../../../common';
+
+th.sortable:after {
+    font-family: Icons;
+    content: '\f0dc';
+}
+
+th.ascending:after {
+    font-family: Icons;
+    content: '\f0de';
+}
+
+th.descending:after {
+    font-family: Icons;
+    content: '\f0dd';
+}
+
+.table {
+    tbody tr td {
+        overflow: hidden;
+    }
+}
+
+.text-labels {
+    .label:first-child {
+        margin-left: 5px;
+    }
+}
+
+img {
+    width: 48px;
+    height: 48px;
+    float: left;
+}
+
+.vcenter {
+    display: flex;
+    align-items: center;
+}
+
+.author {
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}

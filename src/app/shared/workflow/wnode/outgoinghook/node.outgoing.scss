@@ -1,0 +1,12 @@
+@import '../workflow.node.common';
+.workflowHook {
+  .decoration {
+    margin-right: 2px;
+  }
+  .info {
+    flex: 1;
+    padding: 2px 4px 0 4px;
+    font-size: 0.8em;
+    line-height: 0.9em;
+  }
+}

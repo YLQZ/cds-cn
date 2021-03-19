@@ -1,0 +1,8 @@
+<div class="wrapper">
+    <app-breadcrumb [path]="path"></app-breadcrumb>
+    <app-scrollview class="scrollview">
+        <app-data-table [withFilter]="filter" [withPagination]="25" [columns]="columns" [data]="users"
+            [loading]="loading">
+        </app-data-table>
+    </app-scrollview>
+</div>

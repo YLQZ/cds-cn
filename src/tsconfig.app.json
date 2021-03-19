@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "lib": [
+      "es2016",
+      "dom"
+    ],
+    "outDir": "../out-tsc/app",
+    "module": "esnext",
+    "baseUrl": "",
+    "paths": {},
+    "types": []
+  },
+  "include": [
+    "**/*.ts",
+    "../node_modules/ng2-codemirror-typescript/**/*.ts",
+    "../node_modules/ng-semantic/**/*.ts"
+  ],
+  "exclude": [
+    "test.ts",
+    "**/*.ngtypecheck.ts",
+    "**/*.spec.ts",
+    "../node_modules/ng-semantic/demo/**/*.ts",
+    "../node_modules/angular2-prettyjson/node_modules/**/*.ts",
+    "../node_modules/angular2-prettyjson/**/*.ts"
+  ],
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true,
+    "enableIvy": true
+  }
+}

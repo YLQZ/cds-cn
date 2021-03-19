@@ -1,0 +1,122 @@
+@import "../common";
+
+.app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .page {
+        flex: 1;
+        overflow: hidden;
+
+        .content {
+            height: 100%;
+            margin-left: $sidebarCloseWidth;
+            transition: all 0.4s ease 0s;
+            padding-top: 0px;
+        }
+    }
+
+    .banner {
+        height: 50px;
+        background-color: $cds_color_red;
+        text-align: center;
+        line-height: 50px;
+        color: white;
+        font-weight: 600;
+
+        &.update {
+            background-color: $cds_color_orange;
+            cursor: pointer;
+        }
+    }
+
+    .loading {
+        background-color: $darkBackground;
+
+        .column {
+            width: 600px;
+        }
+
+        .logo {
+            margin: 60px auto;
+            height: 100px;
+        }
+
+        .grayscale {
+            animation: grayscale 10s infinite;
+            -webkit-animation: grayscale 10s infinite;
+        }
+
+        @keyframes grayscale {
+            0%,
+            100% {
+                -webkit-filter: grayscale(0%);
+            }
+
+            50% {
+                -webkit-filter: grayscale(100%);
+            }
+        }
+
+        @-webkit-keyframes grayscale {
+            0%,
+            100% {
+                -webkit-filter: grayscale(0%);
+            }
+
+            50% {
+                -webkit-filter: grayscale(100%);
+            }
+        }
+
+        p {
+            text-align: center;
+            color: #e6e6e6;
+        }
+    }
+}
+
+@keyframes slidein {
+    from {
+        margin-left: -50%;
+        transform: scaleX(1);
+    }
+
+    50% {
+        margin-left: 100%;
+        transform: scaleX(1);
+    }
+
+    51% {
+        margin-left: 100%;
+        transform: scaleX(-1);
+    }
+
+    to {
+        margin-left: -50%;
+        transform: scaleX(-1);
+    }
+}
+
+@keyframes slideinbanner {
+    from {
+        left: 0;
+        transform: scaleX(1);
+    }
+
+    50% {
+        left: 96%;
+        transform: scaleX(1);
+    }
+
+    51% {
+        left: 96%;
+        transform: scaleX(-1);
+    }
+
+    to {
+        left: 0%;
+        transform: scaleX(-1);
+    }
+}

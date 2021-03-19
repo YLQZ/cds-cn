@@ -1,0 +1,13 @@
+@import '../../../../common';
+.ui.input {
+  position: inherit;
+}
+
+.ui.form textarea.lock {
+  resize: none;
+  border: none;
+}
+
+.middle-aligned {
+  vertical-align: middle !important;
+}

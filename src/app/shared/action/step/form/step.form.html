@@ -1,0 +1,34 @@
+<div class="ui form">
+    <div class="field" *ngIf="expended">
+        <sm-card class="ui card" *ngIf="selected">
+            <card-title><b>{{selected.group ? selected.group.name + '/' + selected.name : selected?.name}}</b></card-title>
+            <card-subtitle>{{selected?.type}}</card-subtitle>
+            <card-content>
+                <markdown [data]="selected?.description"></markdown>
+            </card-content>
+        </sm-card>
+        <sm-select name="step" class="search" [options]="{'fullTextSearch': true}" [model]="selectedID" (onChange)="selectAction($event)">
+            <option *ngFor="let a of actions" [value]="a.id" [disabled]="a.deprecated">
+                {{a.group ? a.group.name + '/' + a.name : a.name}}
+                <span class="right floated" *ngIf="a.deprecated">
+                    <i class="warning orange sign icon"></i>
+                    {{'common_deprecated' | translate}}
+                </span>
+            </option>
+        </sm-select>
+    </div>
+    <div class="field" *ngIf="expended">
+        <div class="ui buttons fluid">
+            <button class="ui green button" (click)="clickAddStep()" [disabled]="!selected">
+                <i class="plus icon"></i>{{ 'job_add_step' | translate }}
+            </button>
+            <div class="or"></div>
+            <button class="ui grey button" (click)="clickCancel()">{{'btn_cancel' | translate}}</button>
+        </div>
+    </div>
+    <div class="field" *ngIf="!expended">
+        <button class="ui fluid blue button" (click)="showActions()">
+            <i class="plus icon"></i>{{ 'job_add_step' | translate }}
+        </button>
+    </div>
+</div>

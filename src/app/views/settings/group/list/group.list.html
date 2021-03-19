@@ -1,0 +1,11 @@
+<div class="wrapper">
+    <app-breadcrumb [path]="path">
+        <a class="ui right floated green button small buttonBreadcrumb" [routerLink]="['add']">{{ 'btn_add' | translate
+            }}</a>
+    </app-breadcrumb>
+    <app-scrollview class="scrollview">
+        <app-data-table [withFilter]="filter" [withPagination]="25" [columns]="columns" [data]="groups"
+            [loading]="loading">
+        </app-data-table>
+    </app-scrollview>
+</div>

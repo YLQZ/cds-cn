@@ -1,0 +1,14 @@
+@import '../../../../../common';
+.codeContainer {
+    position: relative;
+}
+
+h2 {
+    text-align: center;
+}
+
+.centeredField {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

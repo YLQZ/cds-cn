@@ -1,0 +1,33 @@
+<div class="wrapper">
+  <app-breadcrumb [path]="path">
+    <a class="ui right floated green button small buttonBreadcrumb" [routerLink]="['add']">{{ 'btn_add' | translate
+      }}</a>
+  </app-breadcrumb>
+  <app-scrollview class="scrollview">
+    <div class="ui grid">
+      <div class="ui row">
+        <div class="ui eight wide column">
+          <div class="ui fluid action input">
+            <input type="text" [placeholder]="'worker_model_binary_capability' | translate" [(ngModel)]="binaryValue">
+            <button *ngIf="!binarySelected" class="ui blue button" (click)="searchBinary()">
+              {{'common_search' | translate}}
+            </button>
+            <button *ngIf="binarySelected" class="ui button" (click)="resetBinary()">
+              {{'common_cancel' | translate}}
+            </button>
+          </div>
+        </div>
+        <div class="ui eight wide column">
+          <sui-select class="selection" [placeholder]="'worker_model_state' | translate" [(ngModel)]="selectedState"
+            [options]="['', 'official', 'disabled', 'register', 'error', 'deprecated']" [isSearchable]="true"
+            (selectedOptionChange)="selectState()" #selectFilter>
+            <sui-select-option *ngFor="let option of selectFilter.filteredOptions" [value]="option">
+            </sui-select-option>
+          </sui-select>
+        </div>
+      </div>
+    </div>
+    <app-data-table [withFilter]="filter" [withPagination]="25" [columns]="columns" [data]="workerModels"
+      [loading]="loading"></app-data-table>
+  </app-scrollview>
+</div>

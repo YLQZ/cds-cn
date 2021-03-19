@@ -1,0 +1,46 @@
+<div class="ui active massive text loader" *ngIf="loading">CDS is loading</div>
+
+<div class="app" *ngIf="!loading">
+    <div class="page" *ngIf="!isAPIAvailable || (maintenance && isConnected && currentAuthSummary?.user?.ring !== 'ADMIN')">
+        <div class="content">
+            <div class="wrapper loading">
+                <app-scrollview class="scrollview">
+                    <div class="ui padded centered grid">
+                        <div class="column">
+                            <img class="logo ui centered image grayscale" src="assets/images/cds.png" alt="CDS Logo">
+                            <p *ngIf="!isAPIAvailable">{{ 'cdsapi_loading' | translate }}</p>
+                            <p *ngIf="isAPIAvailable">{{ 'maintenance_title' | translate }}</p>
+                        </div>
+                    </div>
+                </app-scrollview>
+            </div>
+        </div>
+    </div>
+
+    <ng-container *ngIf="isAPIAvailable && (!isConnected || !maintenance || currentAuthSummary?.user?.ring === 'ADMIN')">
+        <app-navbar *ngIf="isConnected && !hideNavBar"></app-navbar>
+
+        <div class="banner" *ngIf="(maintenance) && (!isConnected || currentAuthSummary?.user?.ring == 'ADMIN')">
+            {{ 'maintenance_title' | translate }}
+        </div>
+        <div class="banner update" (click)="refresh()" *ngIf="showUIUpdatedBanner">
+            {{ 'ui_updated' | translate }}
+        </div>
+
+        <div class="page" [class.connected]="isConnected && !hideNavBar">
+            <div class="content" [class.connected]="isConnected && !hideNavBar">
+                <div class="toast">
+                    <toaster-container [toasterconfig]="toasterConfigDefault"></toaster-container>
+                </div>
+                <router-outlet></router-outlet>
+                <div class="ui active text loader" *ngIf="displayResolver">{{ 'common_loading_project' | translate }}
+                </div>
+            </div>
+        </div>
+
+        <app-node-edit-modal></app-node-edit-modal>
+    </ng-container>
+
+    <toaster-container [toasterconfig]="toasterConfigErrorHTTP"></toaster-container>
+    <toaster-container [toasterconfig]="toasterConfigErrorHTTPLocked"></toaster-container>
+</div>

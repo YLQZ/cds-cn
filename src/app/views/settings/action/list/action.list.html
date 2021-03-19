@@ -1,0 +1,13 @@
+<div class="wrapper">
+    <app-breadcrumb [path]="path">
+        <a class="ui right floated green button small buttonBreadcrumb" [routerLink]="['add']">{{ 'btn_add' | translate
+            }}</a>
+    </app-breadcrumb>
+    <app-tabs [tabs]="tabs" (onSelect)="selectTab($event)"></app-tabs>
+    <app-scrollview class="scrollview" [ngSwitch]="selectedTab.key">
+        <app-data-table *ngSwitchCase="'custom'" [withFilter]="filter" [withPagination]="15"
+            [columns]="columns" [data]="actions" [loading]="loading"></app-data-table>
+        <app-data-table *ngSwitchCase="'builtin'" [withFilter]="filterBuiltin" [withPagination]="15"
+            [columns]="columnsBuiltin" [data]="actionsBuiltin" [loading]="loadingBuiltin"></app-data-table>
+    </app-scrollview>
+</div>

@@ -1,0 +1,42 @@
+<div class="ui grid" *ngIf="!loading">
+    <div class="ui row">
+        <div class="six wide column">
+            <h3>{{ 'project_env_list_title' | translate }}</h3>
+        </div>
+        <div class="four wide column centered">
+            <a class="ui blue button" [routerLink]="['./environment']"
+                [class.disabled]="!project.permissions.writable">{{ 'environment_create' | translate }}</a>
+        </div>
+        <div class="right aligned six wide column">
+            <app-input-autofocus [(model)]="filter"></app-input-autofocus>
+        </div>
+    </div>
+
+    <div class="ui row">
+        <div class="ui sixteen wide column">
+            <div
+                *ngIf="project.environment_names && project.environment_names.length > 0;then environments;else noenvironments">
+            </div>
+            <ng-template #environments>
+                <div class="ui stackable four cards">
+                    <a [routerLink]="['./environment', env.name]" class="ui link card"
+                        *ngFor="let env of filteredEnvironments">
+                        <div class="content">
+                            <div class="header">
+                                <span [innerText]="env.name"></span>
+                            </div>
+                            <div class="meta"></div>
+                        </div>
+                    </a>
+                </div>
+            </ng-template>
+            <ng-template #noenvironments>
+                <div class="ui segment">
+                    <span>{{ 'environment_no' | translate }}</span>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
+<div class="ui text active loader" *ngIf="loading">{{'common_loading' | translate}}</div>
+

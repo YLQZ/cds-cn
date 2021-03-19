@@ -1,0 +1,40 @@
+@import '../workflow.node.common';
+.workflowNode {
+  display: flex;
+  flex-direction: column;
+  &:hover {
+    .details {
+      .actions-wrapper {
+        .actions {
+          display: flex;
+        }
+      }
+    }
+  }
+  .context {
+    flex: 1;
+    min-width: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 2px 4px 0 4px;
+    .item {
+      flex: 1;
+      font-size: 0.8em;
+      line-height: 0.9em;
+    }
+  }
+  .actions-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    .actions {
+      display: none;
+      margin-left: 5px;
+      flex-direction: row;
+      padding: 0 4px 4px 0;
+      .action {
+        margin-left: 2px;
+      }
+    }
+  }
+}
