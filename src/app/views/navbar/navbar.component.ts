@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Application } from 'app/model/application.model';
 import { Broadcast } from 'app/model/broadcast.model';
+import { LanguageStore } from 'app/service/language/language.store'
 import { Help } from 'app/model/help.model';
 import { NavbarProjectData, NavbarRecentData, NavbarSearchItem } from 'app/model/navbar.model';
 import { Project } from 'app/model/project.model';
@@ -44,6 +45,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     previousBroadcastsToDisplay: Array<Broadcast> = new Array<Broadcast>();
     loading = true;
     listWorkflows: List<NavbarRecentData>;
+    currentCountry: string;
     langSubscription: Subscription;
     navbarSubscription: Subscription;
     authSubscription: Subscription;
@@ -73,6 +75,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         private _workflowStore: WorkflowStore,
         private _broadcastStore: BroadcastStore,
         private _router: Router,
+        private _language: LanguageStore,
         private _theme: ThemeStore,
         private _routerService: RouterService,
         private _cd: ChangeDetectorRef
@@ -81,6 +84,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.currentAuthSummary = s;
             this._cd.markForCheck();
         });
+        this.langSubscription = this._language.get().subscribe(l=>{
+            this.currentCountry = l
+            this._cd.markForCheck()
+        })
 
         this.themeSubscription = this._theme.get().subscribe(t => {
             this.darkActive = t === 'night';
@@ -105,6 +112,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void { } // Should be set to use @AutoUnsubscribe with AOT
 
+    changeCountry(){
+        this._language.set(this.currentCountry)
+    }
     changeTheme() {
         this.darkActive = !this.darkActive;
         this._theme.set(this.darkActive ? 'night' : 'light');

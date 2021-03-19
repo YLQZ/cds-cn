@@ -1,2 +1,17 @@
+.idea
+.vscode
 ui.tar.gz
 private.proxy.conf.json
+node_modules
+coverage
+tests
+typings
+src/app/**/*.js
+semantic
+semantic\\
+e2e/*.png
+documentation
+dist
+package-lock.json
+
+

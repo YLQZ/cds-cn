@@ -70,7 +70,8 @@ export let errorFactory = () => {
         AppService,
         EventService,
         { provide: ErrorHandler, useFactory: errorFactory },
-        { provide: LOCALE_ID, useValue: 'en' }
+        { provide:LOCALE_ID,useValue:navigator.language.match(/en/)?'en':'zh'},
+        { provide: LOCALE_ID, useValue: 'zh' }
     ],
     bootstrap: [AppComponent]
 })
