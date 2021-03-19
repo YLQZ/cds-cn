@@ -79,17 +79,17 @@ export class AppComponent implements OnInit, OnDestroy {
         this.toasterConfigDefault = this._toastService.getConfigDefault();
         this.toasterConfigErrorHTTP = this._toastService.getConfigErrorHTTP();
         this.toasterConfigErrorHTTPLocked = this._toastService.getConfigErrorHTTPLocked();
-        _translate.addLangs(['en', 'fr']);
-        _translate.setDefaultLang('en');
-        let browserLang = navigator.language.match(/fr/) ? 'fr' : 'en';
-        _translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
-        registerLocaleData(browserLang.match(/fr/) ? localeFR : localeEN);
+        _translate.addLangs(['en', 'zh']);
+        _translate.setDefaultLang('zh');
+        let browserLang = navigator.language.match(/en/) ? 'en':'zh';
+        _translate.use(browserLang.match(/en|zh/) ? browserLang : 'zh');
+        registerLocaleData(browserLang.match(/en/) ?localeEN:localeZH  );
 
         this.languageSubscriber = this._language.get().subscribe(l => {
             if (l) {
                 _translate.use(l);
             } else {
-                _language.set(browserLang.match(/en|fr/) ? browserLang : 'en');
+                _language.set(browserLang.match(/en|zh/) ? browserLang : 'zh');
             }
         });
         this.themeSubscriber = this._theme.get().subscribe(t => {
